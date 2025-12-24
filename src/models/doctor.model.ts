@@ -14,10 +14,10 @@ export interface DoctorDocument extends Document {
     end?: string;
   };
   isActive: boolean;
-  updateBy:Schema.Types.ObjectId;
-  updateAt: Date;
-  DeleteBy: Schema.Types.ObjectId;
-  DeleteAt: Date;
+  updatedBy:Schema.Types.ObjectId;
+  updatedAt: Date;
+  DeletedBy: Schema.Types.ObjectId;
+  DeletedAt: Date;
   isDeleted: boolean;
   schedule: [
     {
@@ -43,10 +43,10 @@ const DoctorSchema = new Schema<DoctorDocument>(
     },
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
-    DeleteBy: { type: Schema.Types.ObjectId, ref: 'users' , default: null },
-    DeleteAt: { type: Date },
-    updateBy: { type: Schema.Types.ObjectId, ref: 'users' , default: null },
-    updateAt: { type: Date },
+    DeletedBy: { type: Schema.Types.ObjectId, ref: 'users' , default: null },
+    DeletedAt: { type: Date },
+    updatedBy: { type: Schema.Types.ObjectId, ref: 'users' , default: null },
+    updatedAt: { type: Date },
 
     schedule: [
       {

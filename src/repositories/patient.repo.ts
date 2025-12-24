@@ -2,12 +2,11 @@ import { Patient, PatientDocument } from '../models/patient.model';
 import { buildQuery } from '../utils/buildQuery';
 
 export class PatientRepository {
-  // async create(data: Partial<PatientDocument>): Promise<PatientDocument | null> {
-  //   return await Patient.findOne({data:data.authUserId});
-  // }
-
   async create(data: Partial<PatientDocument & { authUserId: any }>) {
     return Patient.create(data);
+  }
+  async getByIdUser(userId: string){
+    return await Patient.findById(userId);
   }
   async findAll(query: any) {
     const { filter, options } = buildQuery(query);
@@ -44,14 +43,28 @@ export class PatientRepository {
   }
   async deletePatient(deleteId: string, userId: string) {
     return await Patient.findByIdAndUpdate(
-     { _id: deleteId, createdBy: userId },
+      { _id: deleteId, createdBy: userId },
       {
         isDeleted: true,
         isActive: false,
-        DeleteBy: userId,
-        DeleteAt: new Date(),
+        DeletedBy: userId,
+        DeletedAt: new Date(),
       },
       { new: true },
+    );
+  }
+  async restoreData(id: string) {
+    return await Patient.findByIdAndUpdate(
+      id,
+      {
+        isDeleted: false,
+        isActive:true,
+        DeletedBy:null,
+        DeletedAt:null,    
+        },
+      {
+        new: true,
+      },
     );
   }
 }

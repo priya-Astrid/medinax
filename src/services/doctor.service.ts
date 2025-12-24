@@ -78,8 +78,8 @@ export class doctorService {
     if(!doctor) throw new AppError(404, "doctor not found");
 
     doctor.isActive= isActive;
-    doctor.updateBy = userId;
-    doctor.updateAt = new Date();
+    doctor.updatedBy = userId;
+    doctor.updatedAt = new Date();
   
     doctor.save();
      return doctor;

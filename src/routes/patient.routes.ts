@@ -13,34 +13,43 @@ router.get(
   authorizeRole('admin', 'superadmin', 'doctor'),
   controller.getAllPatients,
 );
-router.get('/:patientId', verifyToken, controller.getPatientProfile);
+router.get('/profile/:patientId', verifyToken, controller.getPatientProfile);
+
+router.get('/:patientId', verifyToken, controller.singlePatientData);
+router.put(
+  '/:patientId/image',
+  verifyToken,
+  uploadFile('patients').single('image'),
+  controller.imageUpdateProfile,
+);  //image update
+router.put(
+  '/:patientId/admin',
+  verifyToken,
+  authorizeRole('admin', 'superadmin'),
+  controller.adminUpdateProfile,
+);      //admin update patient profile
 router.put(
   '/:patientId',
- verifyToken,
-   uploadFile("patients").single('image'),
- 
+  verifyToken,
   validate(updatePatientSchema),
   controller.updateProfile,
-);
+); //patient basic info update
 router.delete(
   '/:patientId',
   verifyToken,
   authorizeRole('admin', 'superadmin', 'doctor'),
-  controller.deletePatient,
+  controller.softDeletePatient,
 );
-
+router.patch(
+  '/restore/:patientId',
+  verifyToken,
+  authorizeRole('admin'),
+  controller.restorePatient,
+);
+router.patch(
+  '/toggle/:id',
+  verifyToken,
+  authorizeRole('admin'),
+  controller.toggleStatus,
+);
 export default router;
-
-// import { Router } from 'express';
-// import { PatientController } from '../controllers/patient.controller';
-
-// const router = Router();
-// const controller = new PatientController();
-
-// router.post('/profile', controller.create);
-// router.get('/', controller.getAll);
-// router.get('/:id', controller.getOne);
-// router.put('/:id', controller.update);
-// router.delete('/:id', controller.delete);
-
-// export default router;

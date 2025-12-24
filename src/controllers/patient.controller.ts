@@ -2,6 +2,9 @@ import { Request, Response } from 'express';
 import { PatientService } from '../services/patient.service';
 import { APIResponse } from '../dtos/common/response.dto';
 import { asyncHandler } from '../utils/asyncHandler';
+import { AppError } from '../utils/AppError';
+import { file } from 'zod';
+import { deleteImageFile } from '../utils/deleteImageFile';
 
 const service = new PatientService();
 
@@ -26,16 +29,40 @@ export class PatientController {
     };
     res.status(200).json(response);
   });
+  singlePatientData = asyncHandler(async (req: Request, res, response) => {
+    const singleData = await service.singlePatient(req.params.id);
+    const result: APIResponse<typeof singleData> = {
+      success: true,
+      message: 'single patient data fetched successfully',
+      data: singleData,
+    };
+    res.status(200).json(result);
+  });
 
+  imageUpdateProfile = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.params.patientId;
+    if (!req.file) {
+      throw new AppError(400, 'image file is required');
+    }
+    try {
+      const result = await service.updateProfileImage(userId, {image: req.file.filename});
+      const response: APIResponse<typeof result> = {
+        success: true,
+        message: 'update Profile Image successfully',
+        data: result,
+      };
+
+      res.status(200).json(response);
+    } catch (error) {
+       deleteImageFile(`patients/${req.file.filename}`);
+      throw error;
+    }
+  });
   updateProfile = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.params.patientId;
 
-    const profileData = {
-      ...req.body,
-      image: req.file?.filename,
-    };
-    console.log('sfsds sdf', profileData);
-    console.log('this is data', userId);
+    const profileData = req.body;
+
     const result = await service.updateProfile(userId, profileData);
     const response: APIResponse<typeof result> = {
       success: true,
@@ -44,7 +71,19 @@ export class PatientController {
     };
     res.status(200).json(response);
   });
-  deletePatient = asyncHandler(async (req: Request, res: Response) => {
+  adminUpdateProfile = asyncHandler(async (req: Request, res: Response) => {
+    const userId = req.params.patientId;
+    const profileData = req.body;
+
+    const result = await service.adminUpdateProfile(userId, profileData);
+    const response: APIResponse<typeof result> = {
+      success: true,
+      message: 'admin updated patient profile successfully',
+      data: result,
+    };
+    res.status(200).json(response);
+  });
+  softDeletePatient = asyncHandler(async (req: Request, res: Response) => {
     const deleteId = req.params.id;
     const userId = req.user.id;
     const deleteData = await service.deletePatient(deleteId, userId);
@@ -55,48 +94,32 @@ export class PatientController {
     };
     res.status(200).json(result);
   });
+  restorePatient = asyncHandler(async (req: Request, res: Response) => {
+    const restoreData = await service.restorePatient(req.params.id);
+    const result: APIResponse<typeof restoreData> = {
+      success: true,
+      message: 'restore patient successfully',
+      data: restoreData,
+    };
+    res.status(200).json(result);
+  });
+  toggleStatus = asyncHandler(async (req: Request, res: Response) => {
+    const patientId = req.params.id;
+    const adminId = req.user.id;
+    const { isActive } = req.body;
+    if (typeof isActive !== 'boolean') {
+      throw new AppError(400, 'isActive must be boolean ');
+    }
+    const toggleData = await service.toggleStatusData(
+      patientId,
+      adminId,
+      isActive,
+    );
+    const result: APIResponse<typeof toggleData> = {
+      success: true,
+      message: `patient ${isActive} ?'activate':'deactivate' successfully`,
+      data: toggleData,
+    };
+    res.status(200).json(result);
+  });
 }
-
-// import { Request, Response } from 'express';
-// import { PatientService } from '../services/patient.service';
-// import { APIResponse } from '../dtos/common/response.dto';
-
-// const service = new PatientService();
-
-// export class PatientController {
-//   async create(req: Request, res: Response) {
-//     try {
-//       const patient = await service.createPatient(req.body);
-
-//       const response: APIResponse<typeof patient> = {
-//         success: true,
-//         message: 'Patient created successfully',
-//         data: patient,
-//       };
-//       res.status(201).json(response);
-//     } catch (error: any) {
-//       res.status(400).json({ success: false, message: error.message });
-//     }
-//   }
-
-//   async getAll(req: Request, res: Response) {
-//     const patients = await service.getAllPatients();
-//     res.json(patients);
-//   }
-
-//   async getOne(req: Request, res: Response) {
-//     const patient = await service.getPatientById(req.params.id);
-//     if (!patient) return res.status(404).json({ message: 'Not found' });
-//     res.json(patient);
-//   }
-
-//   async update(req: Request, res: Response) {
-//     const patient = await service.updatePatient(req.params.id, req.body);
-//     res.json(patient);
-//   }
-
-//   async delete(req: Request, res: Response) {
-//     await service.deletePatient(req.params.id);
-//     res.status(204).send();
-//   }
-// }

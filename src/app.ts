@@ -36,7 +36,7 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 app.use(cookieParser());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 app.use('/api/permission', permission);
 app.use('/api/prescription', prescription);
 app.use('/api/pharmacy', pharmacyRouter);
