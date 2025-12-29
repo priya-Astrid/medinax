@@ -21,41 +21,33 @@ export class PatientService {
     if (!profile) throw new AppError(404, 'patient profile not found');
     return profile;
   }
-async updateProfileImage(userId: string,data: { image: string }) {
- 
-  const patient = await this.patientRepo.findByUserId(userId);
-  if (!patient) {
-    deleteImageFile(`patients/${data.image}`);
-    throw new AppError(404, 'Patient not found');
+  async patientProfile(userId: string) {
+    const profileData = await this.patientRepo.findByUserId(userId);
+    if (!profileData) throw new AppError(404, 'Patient not found');
+    if (profileData.isDeleted) {
+      throw new AppError(400, 'patient is deleted');
+    }
+    return profileData;
   }
+  async updateProfileImage(userId: string, data: { image: string }) {
+    const patient = await this.patientRepo.findByUserId(userId);
+    if (!patient) {
+      deleteImageFile(`patients/${data.image}`);
+      throw new AppError(404, 'Patient not found');
+    }
 
     if (patient.image) {
-    const oldFile = patient.image.split('/uploads/')[1];
-    deleteImageFile(oldFile);
+      const oldFile = patient.image.split('/uploads/')[1];
+      deleteImageFile(oldFile);
+    }
+    const imageUrl = `${process.env.BASE_URL}/patients/${data.image}`;
+
+    patient.image = imageUrl;
+    await patient.save();
+
+    return patient;
   }
-  const imageUrl = `${process.env.BASE_URL}/uploads/patients/${data.image}`;
 
-  patient.image = imageUrl;
-  await patient.save();
-
-  return patient;
-}
-
-  // async updateProfileImage(userId: string, data: { image: string }) {
-  //   if (!data.image) throw new AppError(400, 'image is required');
-  //   const patient = await this.patientRepo.findByUserId(userId);
-  //   if (!patient) {
-  //     deleteImageFile(data.image);
-  //     throw new AppError(404, 'Patient not found');
-  //   }
-
-  //   const imageUrl = `${process.env.BASE_URL}/uploads/patients/${data.image}`;
-  //   console.log("image url",imageUrl);
-  //   const patientUpdate: any = {};
-  //   if (data.image) patientUpdate.image = imageUrl;
-  //   const profileImage = await this.patientRepo.updateByUserId(userId, data);
-  //   return profileImage;
-  // }
   async updateProfile(userId: string, data: any) {
     // update auth-level fields if psresent (name, emai, password etc)
     const user = await this.userRepo.getByIdUser(userId);

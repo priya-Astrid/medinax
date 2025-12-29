@@ -5,6 +5,7 @@ import { asyncHandler } from '../utils/asyncHandler';
 import { AppError } from '../utils/AppError';
 import { file } from 'zod';
 import { deleteImageFile } from '../utils/deleteImageFile';
+import { AuthenticatedRequest } from '../middleware/auth.middleware';
 
 const service = new PatientService();
 
@@ -19,7 +20,7 @@ export class PatientController {
     res.status(200).json(response);
   });
 
-  getPatientProfile = asyncHandler(async (req: Request, res: Response) => {
+  getPatientByAdmin = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.params.patientId;
     const profile = await service.getProfileBy(userId);
     const response: APIResponse<typeof profile> = {
@@ -38,7 +39,19 @@ export class PatientController {
     };
     res.status(200).json(result);
   });
-
+  getPatientProfile = asyncHandler(async(req: AuthenticatedRequest, res: Response)=>{
+   if(!req.user?.id){ 
+    throw new AppError(401, 'unauthorized access')
+   }
+   const userId = req.user.id;
+   const updateProfile = await service.patientProfile(userId);
+   const result : APIResponse<typeof updateProfile>={
+    success : true,
+    message : "Patient profile Fetched successfully",
+    data: updateProfile
+   }
+   res.status(200).json(result);
+  })
   imageUpdateProfile = asyncHandler(async (req: Request, res: Response) => {
     const userId = req.params.patientId;
     if (!req.file) {
@@ -58,8 +71,12 @@ export class PatientController {
       throw error;
     }
   });
-  updateProfile = asyncHandler(async (req: Request, res: Response) => {
-    const userId = req.params.patientId;
+
+  updateProfile = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+  if(!req.user?.id) {
+    throw new AppError(401, 'unauthorized access');
+  }
+    const userId = req.user.id;
 
     const profileData = req.body;
 

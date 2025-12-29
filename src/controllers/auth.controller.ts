@@ -3,6 +3,7 @@ import { UserService } from '../services/auth.service';
 import { APIResponse } from '../dtos/common/response.dto';
 import { asyncHandler } from '../utils/asyncHandler';
 import { AuthenticatedRequest } from '../middleware/auth.middleware';
+import { AppError } from '../utils/AppError';
 
 const service = new UserService();
 export class UserController {
@@ -137,7 +138,10 @@ export class UserController {
     };
     res.status(200).json(result);
   });
-  softDelete = asyncHandler(async (req: Request, res: Response) => {
+  softDelete = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    if(!req.user?.id){
+      throw new AppError(401,'unauthorized access');
+    }
     const userId = req.user.id;
 
     const deletedData = await service.softDeleteUser(req.params.id, userId);

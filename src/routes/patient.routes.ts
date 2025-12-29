@@ -13,7 +13,8 @@ router.get(
   authorizeRole('admin', 'superadmin', 'doctor'),
   controller.getAllPatients,
 );
-router.get('/profile/:patientId', verifyToken, controller.getPatientProfile);
+router.get("/profile", verifyToken, controller.getPatientProfile);
+router.get('/profile/:patientId', verifyToken, controller.getPatientByAdmin);
 
 router.get('/:patientId', verifyToken, controller.singlePatientData);
 router.put(

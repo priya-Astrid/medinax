@@ -4,6 +4,7 @@ import { validate } from '../middleware/validate';
 import { DoctorValidationSchema } from '../validations/doctor.validation';
 import { verifyToken } from '../middleware/auth.middleware';
 import { authorizeRole } from '../middleware/authorizedRole';
+import { uploadFile } from '../middleware/multer';
 const router = Router();
 const controller = new DoctorController();
 
@@ -15,14 +16,22 @@ router.get(
   controller.getSpecializations,
 );
 // router.get('/paginated', controller.getAllDcotorPagination);
-router.post('/search', verifyToken, controller.searchDoctors);
-router.get('/:doctorId', verifyToken, controller.getDoctorById);
+router.get('/doctorProfile', verifyToken, controller.getDoctorProfile);
+router.get('/search', verifyToken, controller.searchDoctors);
+router.get('/:doctorId', verifyToken, controller.getDoctorAdminById);
 router.put(
   '/:doctorId/data',
   verifyToken,
   authorizeRole('doctor', 'admin'),
   validate(DoctorValidationSchema),
-  controller.updateDoctor,
+  controller.updateDoctorByAdmin,
+);
+router.patch(
+  '/:doctorId/image',
+  verifyToken,
+  // authorizeRole('doctor'),
+  uploadFile('doctors').single('image'),
+  controller.imageUploadDoctorProfile,
 );
 
 router.post(
@@ -31,14 +40,14 @@ router.post(
   authorizeRole('doctor'),
   controller.addSchedule,
 );
-router.post(
+router.patch(
   '/:doctorId/status',
   verifyToken,
   authorizeRole('admin', 'superadmin'),
   controller.toggleStatus,
 );
 
-router.delete(
+router.patch(
   '/:doctorId',
   verifyToken,
   authorizeRole('admin', 'superadmin'),

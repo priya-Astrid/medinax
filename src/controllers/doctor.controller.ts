@@ -2,8 +2,9 @@ import { Request, Response, NextFunction, response } from 'express';
 import { APIResponse } from '../dtos/common/response.dto';
 import { doctorService } from '../services/doctor.service';
 import { AppError } from '../utils/AppError';
-import { availableMemory } from 'process';
 import { asyncHandler } from '../utils/asyncHandler';
+import { deleteImageFile } from '../utils/deleteImageFile';
+import { AuthenticatedRequest } from '../middleware/auth.middleware';
 
 const service = new doctorService();
 
@@ -65,18 +66,57 @@ export class DoctorController {
   //   }
   // }
   //   getById data
-  getDoctorById = asyncHandler(async (req: Request, res: Response) => {
-    const doctor = await service.getById(req.params.id);
+
+  getDoctorProfile = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response) => {
+      if (!req.user?.id) {
+        throw new AppError(401, 'unauthorized access');
+      }
+      const doctorId = req.user.id;
+      const doctorProfile = await service.getDoctorProfile(doctorId);
+      const result: APIResponse<typeof doctorProfile> = {
+        success: true,
+        message: 'doctor profile fetch successfully',
+        data: doctorProfile,
+      };
+      res.status(200).json(result);
+    },
+  );
+  getDoctorAdminById = asyncHandler(async (req: Request, res: Response) => {
+    const doctor = await service.getSingleDoctor(req.params.doctorId);
+    console.log('thsi ', doctor);
     const response: APIResponse<typeof doctor> = {
       success: true,
-      message: 'Fetch data successfully',
+      message: 'Fetch Single Doctor successfully',
       data: doctor,
     };
     res.status(200).json(response);
   });
+  imageUploadDoctorProfile = asyncHandler(
+    async (req: Request, res: Response) => {
+      try {
+        if (!req.file) throw new AppError(400, 'image file is required');
+        const userId = req.params.doctorId;
+        const imageUpdateData = await service.imageUploadProfile(userId, {
+          image: req.file.filename,
+        });
+        console.log('this is userid', userId);
+        console.log('this is dadf', req.file.filename);
+        const result: APIResponse<typeof imageUpdateData> = {
+          success: true,
+          message: 'doctor image upload successfully',
+          data: imageUpdateData,
+        };
+        res.status(200).json(result);
+      } catch (error) {
+        deleteImageFile(`doctors/${req.file?.filename}`);
+        throw error;
+      }
+    },
+  );
   // update doctor data
-  updateDoctor = asyncHandler(async (req: Request, res: Response) => {
-    const updatedoctor = await service.updateDoctorProfile(
+  updateDoctorByAdmin = asyncHandler(async (req: Request, res: Response) => {
+    const updatedoctor = await service.updateDoctorByAdmin(
       req.params.id,
       req.body,
     );
@@ -87,6 +127,24 @@ export class DoctorController {
     };
     res.status(200).json(response);
   });
+  doctorUpdateProfile = asyncHandler(
+    async (req: AuthenticatedRequest, res: Response) => {
+      if (!req.user?.id) {
+        throw new AppError(401, 'authorized access');
+      }
+      const doctorId = req.user?.id;
+      const updatedProfile = await service.updateDoctorProfile(
+        doctorId,
+        req.body,
+      );
+
+      const result: APIResponse<typeof updatedProfile> = {
+        success: true,
+        message: 'doctor profile updated successfully',
+      };
+      res.status(200).json(result);
+    },
+  );
   //   search specialization and day Doctor
   searchDoctors = asyncHandler(async (req: Request, res: Response) => {
     const searchdoctor = await service.searchdoctor(req.query);

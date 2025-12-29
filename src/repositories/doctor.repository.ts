@@ -23,7 +23,11 @@ export class DoctorRepository {
   async findDoctorById(id: string) {
     return await Doctor.findById(id);
   }
-  async findById(id: string): Promise<DoctorDocument | null> {
+   async findByUserId(userId: string) {
+      return await Doctor.findOne({ userId: userId }).populate('userId');
+    }
+
+  async findById(id: string){
     return await Doctor.findById(id).populate(
       'userId',
       'firstname lastname email',

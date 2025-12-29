@@ -8,6 +8,7 @@ export interface DoctorDocument extends Document {
   consultationFees: string;
   experience?: number;
   fees: string;
+  image? : string;
   availableDays?: string[];
   availableTime?: {
     start?: string;
@@ -41,6 +42,7 @@ const DoctorSchema = new Schema<DoctorDocument>(
       start: String,
       end: String,
     },
+    image: {type: String},
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
     DeletedBy: { type: Schema.Types.ObjectId, ref: 'users' , default: null },
