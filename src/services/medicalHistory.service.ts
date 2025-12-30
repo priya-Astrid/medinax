@@ -75,7 +75,10 @@ export class MedicalHistoryService {
   async getSearchData(query: any) {
     return this.repo.searchData(query);
   }
-  // const appointment =  await  appointmentRepo.findById(data.appointmentId);
-  // if(!appointment){throw new AppError(404,"appointment not found")}
-  // if(appointment .status!== "COMPLETED"){ throw new AppError(400,",medical history  can be created only after appointment completion")}
+  async softDelete(id: string){
+    return this.repo.softDeleteData(id)
+  }
+  async restoreData(id: string){
+    return this.repo.restoreData(id)
+  }
 }

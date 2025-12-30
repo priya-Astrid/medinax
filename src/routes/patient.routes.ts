@@ -13,42 +13,48 @@ router.get(
   authorizeRole('admin', 'superadmin', 'doctor'),
   controller.getAllPatients,
 );
-router.get("/profile", verifyToken, controller.getPatientProfile);
-router.get('/profile/:patientId', verifyToken, controller.getPatientByAdmin);
+router.get('/me', verifyToken, controller.getPatientProfile);
+router.get(
+  '/:id',
+  verifyToken,
+  authorizeRole('superadmin', 'admin', 'doctor'),
+  controller.getPatientByAdmin,
+);
 
-router.get('/:patientId', verifyToken, controller.singlePatientData);
+router.get('/:id', verifyToken, controller.singlePatientData);
 router.put(
-  '/:patientId/image',
-  verifyToken,
-  uploadFile('patients').single('image'),
-  controller.imageUpdateProfile,
-);  //image update
-router.put(
-  '/:patientId/admin',
-  verifyToken,
-  authorizeRole('admin', 'superadmin'),
-  controller.adminUpdateProfile,
-);      //admin update patient profile
-router.put(
-  '/:patientId',
+  '/:id',
   verifyToken,
   validate(updatePatientSchema),
   controller.updateProfile,
-); //patient basic info update
-router.delete(
-  '/:patientId',
+);
+router.put(
+  '/:id/avatar',
+  verifyToken,
+  uploadFile('patients').single('image'),
+  controller.imageUpdateProfile,
+); //image update
+router.put(
+  '/:id',
+  verifyToken,
+  authorizeRole('admin', 'superadmin'),
+  controller.adminUpdateProfile,
+); //admin update patient profile
+ //patient basic info update
+router.patch(
+  '/:id/soft-delete',
   verifyToken,
   authorizeRole('admin', 'superadmin', 'doctor'),
   controller.softDeletePatient,
 );
 router.patch(
-  '/restore/:patientId',
+  '/:id/restore',
   verifyToken,
   authorizeRole('admin'),
   controller.restorePatient,
 );
 router.patch(
-  '/toggle/:id',
+  '/:id/status',
   verifyToken,
   authorizeRole('admin'),
   controller.toggleStatus,

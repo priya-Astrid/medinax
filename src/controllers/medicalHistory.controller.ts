@@ -52,7 +52,6 @@ export class MedicalHistoryController {
   // get searchFilter
   getSearchFilter = asyncHandler(async (req: Request, res: Response) => {
     const searchdata = await service.getSearchData(req.query);
-    console.log('this is repos data', searchdata);
     const result: APIResponse<typeof searchdata> = {
       success: true,
       message: 'search filter data',
@@ -60,4 +59,22 @@ export class MedicalHistoryController {
     };
     res.status(200).json(result);
   });
+  softDelete = asyncHandler(async (req: Request, res: Response) => {
+    const deleteData = await service.softDelete(req.params.id);
+    const result: APIResponse<typeof deleteData> = {
+      success: true,
+      message: "data deleted Successfully",
+      data: deleteData
+    };
+    res.status(200).json(result);
+  });
+  restoreData = asyncHandler(async(req: Request, res: Response)=>{
+    const restoreData = await service.restoreData(req.params.id);
+    const result : APIResponse<typeof restoreData> ={
+      success:true, 
+      message: "Restore data successfully",
+      data: restoreData
+    }
+    res.status(200).json(result);
+  })
 }

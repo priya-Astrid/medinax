@@ -38,11 +38,22 @@ router.get(
   controller.getSingleRecord,
 ); //singlerecord
 router.put(
-  '/:id',
+  '/:id/update',
   verifyToken,
   authorizeRole('superadmin', 'admin'),
   validate(updateMedicalHistory),
   controller.updateRecords,
+);
+router.patch(
+  '/:id/soft-delete',
+  verifyToken,
+  authorizeRole('admin'),
+  controller.softDelete,
+);
+router.patch('/:id/restore',
+  verifyToken,
+  authorizeRole('admin'),
+  controller.restoreData
 );
 
 export default router;

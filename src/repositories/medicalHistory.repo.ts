@@ -1,15 +1,12 @@
-
-import {
-  medicalHistory,
-} from '../models/medicalHistory.model';
+import { medicalHistory } from '../models/medicalHistory.model';
 import { buildQuery } from '../utils/buildQuery';
 
 export class MedicalHistoryRepo {
   async createMedicaHistory(data: any) {
     return await medicalHistory.create(data);
   }
-  async findByAppointmentid(appointmentId: string){
-    return await medicalHistory.findOne({appointmentId})
+  async findByAppointmentid(appointmentId: string) {
+    return await medicalHistory.findOne({ appointmentId });
   }
   async findExistingVisit(
     patientId: string,
@@ -24,8 +21,8 @@ export class MedicalHistoryRepo {
     });
   }
   async findData(query: any) {
-    const {filter, options} = buildQuery(query)
-    
+    const { filter, options } = buildQuery(query);
+
     const data = await medicalHistory.find(filter, null, options).lean();
     const total = await medicalHistory.countDocuments(filter);
     const page = options.page ?? 1;
@@ -35,10 +32,9 @@ export class MedicalHistoryRepo {
       page,
       // page: Math.ceil(options.skip/options.limit)+1,
       limit: options.limit,
-      totalPage: Math.ceil(total/options.limit)
-    }
+      totalPage: Math.ceil(total / options.limit),
+    };
     // return await medicalHistory.find();
-
   }
   async findOneData(id: string) {
     return await medicalHistory.findById(id);
@@ -48,28 +44,41 @@ export class MedicalHistoryRepo {
   }
   async searchData(query: any) {
     const { filter, options } = buildQuery(query);
-    
-    if(query.patientId) filter.patientId = query.patientId;
-    if(query.doctorId)  filter.doctorId = query.doctorId;
-    if(query.diagnosis){
-      const keyword = query.diagnosis.trim().split(/\s+/).join(".*");
-      filter.diagnosis= {$regex: keyword, $options: 'i'}
+
+    if (query.patientId) filter.patientId = query.patientId;
+    if (query.doctorId) filter.doctorId = query.doctorId;
+    if (query.diagnosis) {
+      const keyword = query.diagnosis.trim().split(/\s+/).join('.*');
+      filter.diagnosis = { $regex: keyword, $options: 'i' };
     }
-   
+
     const totalRecords = await medicalHistory.countDocuments(filter);
 
-    const record =  await medicalHistory
+    const record = await medicalHistory
       .find(filter)
       .skip(options.skip)
       .limit(options.limit)
       .sort(options.sort);
 
-      return {record, pagination:{
+    return {
+      record,
+      pagination: {
         totalRecords,
-        page:options.page,
+        page: options.page,
         limit: options.limit,
-        totalPages: Math.ceil(totalRecords/options.limit)
-      }}
+        totalPages: Math.ceil(totalRecords / options.limit),
+      },
+    };
+  }
+  async softDeleteData(id: string) {
+    return medicalHistory.findByIdAndUpdate(
+      id,
+      { isDeleted: true },
+      { new: true },
+    );
+  }
+  async restoreData(id: string){
+    return medicalHistory.findByIdAndUpdate(id, {isDeleted: false},{new: true})
   }
   // async searchData(query: any) {
   //   const filter: any = {};

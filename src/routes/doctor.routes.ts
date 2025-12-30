@@ -9,6 +9,8 @@ const router = Router();
 const controller = new DoctorController();
 
 router.get('/', verifyToken, controller.getAllDoctors);
+router.get('/search', verifyToken, controller.searchDoctors);
+
 router.get(
   '/specialization',
   verifyToken,
@@ -16,42 +18,54 @@ router.get(
   controller.getSpecializations,
 );
 // router.get('/paginated', controller.getAllDcotorPagination);
-router.get('/doctorProfile', verifyToken, controller.getDoctorProfile);
-router.get('/search', verifyToken, controller.searchDoctors);
-router.get('/:doctorId', verifyToken, controller.getDoctorAdminById);
+router.get('/me', verifyToken, controller.getDoctorProfile);
+router.patch(
+  '/me/profile',
+  verifyToken,
+  authorizeRole('doctor'),
+  validate(DoctorValidationSchema),
+  controller.updateDoctorProfile,
+);
+
+router.patch(
+  '/:id/avatar',
+  verifyToken,
+  authorizeRole('doctor'),
+  uploadFile('doctors').single('image'),
+  controller.uploadProfileImage,
+);
+router.get('/:id', verifyToken, controller.getDoctorById);
 router.put(
-  '/:doctorId/data',
+  '/:id/profile',
   verifyToken,
   authorizeRole('doctor', 'admin'),
   validate(DoctorValidationSchema),
   controller.updateDoctorByAdmin,
 );
-router.patch(
-  '/:doctorId/image',
-  verifyToken,
-  // authorizeRole('doctor'),
-  uploadFile('doctors').single('image'),
-  controller.imageUploadDoctorProfile,
-);
 
-router.post(
-  '/:doctorId/schedule',
-  verifyToken,
-  authorizeRole('doctor'),
-  controller.addSchedule,
-);
 router.patch(
-  '/:doctorId/status',
+  '/:id/status',
   verifyToken,
   authorizeRole('admin', 'superadmin'),
   controller.toggleStatus,
 );
-
 router.patch(
-  '/:doctorId',
+  '/:id/soft-delete',
   verifyToken,
   authorizeRole('admin', 'superadmin'),
-  controller.deleteDoctor,
+  controller.softDeleteDoctor,
+);
+router.patch(
+  '/:id/restore',
+  verifyToken,
+  authorizeRole('admin','doctor'),
+  controller.restoreDoctor
+)
+router.post(
+  '/:id/schedule',
+  verifyToken,
+  authorizeRole('doctor'),
+  controller.addSchedule,
 );
 
 export default router;

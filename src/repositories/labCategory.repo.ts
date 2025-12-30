@@ -11,6 +11,15 @@ export class LabCategoryRepository {
   async createLabcategory(data: Partial<labCategoryDocument>) {
     return LabCategory.create(data);
   }
+  async dropdownData() {
+    return LabCategory.find(
+      { isDeleted: false, isActive: true },
+      {
+        _id: 1,
+        name: 1,
+      },
+    ).sort({ name: 1});
+  }
   async getAllData(query: any) {
     const { filter, options } = buildQuery(query, ['name', 'slug']);
     // filter.isDeleted = false;
@@ -24,6 +33,7 @@ export class LabCategoryRepository {
       totalPage: Math.ceil(total / options.limit),
     };
   }
+
   async UpdateData(id: string, data: Partial<labCategoryDocument>) {
     return LabCategory.findByIdAndUpdate(id, data, { new: true });
   }

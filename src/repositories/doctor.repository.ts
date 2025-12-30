@@ -103,4 +103,8 @@ export class DoctorRepository {
   async doctorSpecialize(specialization: string) {
     return await Doctor.find({ specialization: specialization });
   }
+  async restoreData(id: string){
+    return await Doctor.findByIdAndUpdate(id, {isDeleted:false}, {new: true})
+  }
 }
+

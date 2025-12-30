@@ -17,6 +17,12 @@ export class LabCategoryService {
     return this.repository.getAllData(query);
   }
 
+  async singleData(id: string){
+    return this.repository.findById(id)
+  }
+  async dropdownData(){
+    return this.repository.dropdownData();
+  }
   async updateData(id: string, data: Partial<labCategoryDocument>) {
     if(data.name){
       const exist = await this.repository.findByName(data.name);

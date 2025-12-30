@@ -19,17 +19,19 @@ routes.post(
   controller.createData,
 );
 routes.get('/', verifyToken, controller.getAllData);
+routes.get('/dropdown', verifyToken, controller.getDropdown);
 routes.put(
   '/:id',
   verifyToken,
   authorizeRole('admin'),
   controller.UpdateLabTest,
 );
-routes.put(
-  '/:id/delete',
+routes.patch(
+  '/:id/soft-delete',
   verifyToken,
   authorizeRole('admin'),
   validate(updateLabCategory),
   controller.softDeleteLab,
 );
 export default routes;
+

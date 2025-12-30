@@ -82,17 +82,16 @@ export class DoctorController {
       res.status(200).json(result);
     },
   );
-  getDoctorAdminById = asyncHandler(async (req: Request, res: Response) => {
-    const doctor = await service.getSingleDoctor(req.params.doctorId);
-    console.log('thsi ', doctor);
-    const response: APIResponse<typeof doctor> = {
+  getDoctorById = asyncHandler(async (req: Request, res: Response) => {
+    const doctor = await service.getSingleDoctor(req.params.id);
+      const response: APIResponse<typeof doctor> = {
       success: true,
       message: 'Fetch Single Doctor successfully',
       data: doctor,
     };
     res.status(200).json(response);
   });
-  imageUploadDoctorProfile = asyncHandler(
+  uploadProfileImage = asyncHandler(
     async (req: Request, res: Response) => {
       try {
         if (!req.file) throw new AppError(400, 'image file is required');
@@ -100,8 +99,6 @@ export class DoctorController {
         const imageUpdateData = await service.imageUploadProfile(userId, {
           image: req.file.filename,
         });
-        console.log('this is userid', userId);
-        console.log('this is dadf', req.file.filename);
         const result: APIResponse<typeof imageUpdateData> = {
           success: true,
           message: 'doctor image upload successfully',
@@ -127,7 +124,7 @@ export class DoctorController {
     };
     res.status(200).json(response);
   });
-  doctorUpdateProfile = asyncHandler(
+  updateDoctorProfile = asyncHandler(
     async (req: AuthenticatedRequest, res: Response) => {
       if (!req.user?.id) {
         throw new AppError(401, 'authorized access');
@@ -186,7 +183,7 @@ export class DoctorController {
     res.status(200).json(result);
   });
   //  soft-delete doctor data
-  deleteDoctor = asyncHandler(async (req: Request, res: Response) => {
+  softDeleteDoctor = asyncHandler(async (req: Request, res: Response) => {
     const deletedById = req.params.id;
     const adminId = req.user.id;
     const deleteDoctor = await service.deleteDoctor(deletedById, adminId);
@@ -197,4 +194,14 @@ export class DoctorController {
     };
     res.status(200).json(result);
   });
+  restoreDoctor = asyncHandler(async(req: Request, res: Response)=>{
+    const restoreData = await service.restoreData(req.params.id);
+    const result: APIResponse<typeof restoreData>={
+       success: true,
+       message:"Restore data successfully",
+       data: restoreData
+    }
+    res.status(200).json(result);
+  })
 }
+

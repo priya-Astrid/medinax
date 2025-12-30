@@ -4,7 +4,7 @@ import { LabCategoryService } from '../services/labCategory.service';
 import { APIResponse } from '../dtos/common/response.dto';
 
 const service = new LabCategoryService();
-export class LabCategoryController  {
+export class LabCategoryController {
   createData = asyncHandler(async (req: Request, res: Response) => {
     const data = await service.createData(req.body);
     const result: APIResponse<typeof data> = {
@@ -19,26 +19,44 @@ export class LabCategoryController  {
     const result: APIResponse<typeof fetchData> = {
       success: true,
       message: 'fetched data successfully',
-      data: fetchData
+      data: fetchData,
     };
     res.status(200).json(result);
   });
-  UpdateLabTest = asyncHandler(async(req: Request, res: Response)=>{
+  UpdateLabTest = asyncHandler(async (req: Request, res: Response) => {
     const UpdateLabData = await service.updateData(req.params.id, req.body);
-    const result : APIResponse<typeof UpdateLabData>={
+    const result: APIResponse<typeof UpdateLabData> = {
       success: true,
-      message:"updated Data successfully",
-      data: UpdateLabData
-    }
+      message: 'updated Data successfully',
+      data: UpdateLabData,
+    };
     res.status(200).json(result);
   });
-  softDeleteLab = asyncHandler(async(req: Request, res: Response)=>{
-    const data = await service.softDelete(req.params.id);
-    const result: APIResponse<typeof data>={
-        success: true,
-        message: "Deleted data successfully",
-        data: data
+  getSingleLab = asyncHandler(async (req: Request, res: Response) => {
+    const singleData = await service.singleData(req.params.id);
+    const result: APIResponse<typeof singleData> = {
+      success: true,
+      message: 'Single fetched successfuly',
+      data: singleData,
+    };
+    res.status(200).json(result);
+  });
+  getDropdown = asyncHandler(async(req: Request, res: Response)=>{
+    const dropdownData = await service.dropdownData();
+    const result : APIResponse<typeof dropdownData>={
+      success: true,
+      message:"dropdown fetched successfully",
+      data : dropdownData
     }
+    res.status(200).json(result);
+  })
+  softDeleteLab = asyncHandler(async (req: Request, res: Response) => {
+    const data = await service.softDelete(req.params.id);
+    const result: APIResponse<typeof data> = {
+      success: true,
+      message: 'Deleted data successfully',
+      data: data,
+    };
     res.status(200).json(result);
   });
 }

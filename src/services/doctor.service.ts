@@ -134,4 +134,7 @@ export class doctorService {
   async doctorSpecialize(specialization: string) {
     return this.repo.doctorSpecialize(specialization);
   }
+  async restoreData(id: string){
+    return this.repo.restoreData(id);
+  }
 }

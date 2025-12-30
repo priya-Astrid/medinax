@@ -30,7 +30,7 @@ export class PatientController {
     };
     res.status(200).json(response);
   });
-  singlePatientData = asyncHandler(async (req: Request, res, response) => {
+  singlePatientData = asyncHandler(async (req: Request, res, Response) => {
     const singleData = await service.singlePatient(req.params.id);
     const result: APIResponse<typeof singleData> = {
       success: true,
