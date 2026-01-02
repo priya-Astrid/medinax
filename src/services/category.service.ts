@@ -27,8 +27,8 @@ export class CategoryService {
     if (!updated) throw new AppError(404, 'category not found');
     return updated;
   }
-  async softDelete(id: string) {
-    const deleted = await this.repository.isDelete(id)
+  async softDelete(id: string, userId: string) {
+    const deleted = await this.repository.isDelete(id, userId)
    if(!deleted) throw new AppError(404, 'category not found')
     return deleted;
   }

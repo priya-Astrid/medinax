@@ -30,6 +30,6 @@ export class pharmacyRepository {
     return await pharmacy.findByIdAndUpdate(id, data, { new: true });
   }
   async deletedData(id: string) {
-     return  pharmacy.findByIdAndUpdate(id,{isDelete: true},{ new: true });
+     return  pharmacy.findByIdAndUpdate(id,{isDelete: true, isActive: false},{ new: true });
   }
 }

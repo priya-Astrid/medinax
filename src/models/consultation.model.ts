@@ -24,6 +24,8 @@ export interface consultationDocument extends Document {
     fileUrl: string;
   }[];
   createdAt: Date;
+  DeletedBy:Schema.Types.ObjectId;
+  DeletedAt:Date;
 }
 const vitalSchema = new Schema({
   height: Number,
@@ -52,6 +54,9 @@ const consultationSchema = new Schema<consultationDocument>(
     status: { type: String, enum: ['OPEN', 'COMPLETED'], default: 'OPEN' },
     followUpDate: { type: Date },
     attachment: [attachmentSchema],
+  DeletedBy: { type: Schema.Types.ObjectId, ref: 'users' , default: null },
+    DeletedAt: { type: Date },
+    
   },
   { timestamps: true },
 );

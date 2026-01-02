@@ -1,7 +1,7 @@
-import mongoose, { Schema, model, Document } from 'mongoose';
+import mongoose, { Schema, model, Document, Types } from 'mongoose';
 
 export interface PatientDocument extends Document {
-  userId: mongoose.Types.ObjectId;
+  userId: Types.ObjectId;
   image: string;
   age: number;
   gender?: string;
@@ -18,7 +18,7 @@ export interface PatientDocument extends Document {
   };
   medicalHistory?: string;
   isActive: boolean;
-  DeletedBy: string;
+  DeletedBy: Types.ObjectId;
   DeletedAt: Date;
   isDeleted: boolean;
   dateOfBirth: Date;
@@ -48,7 +48,7 @@ const PatientSchema = new Schema<PatientDocument>(
     },
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
-    DeletedBy: { type: String },
+    DeletedBy: { type: Schema.Types.ObjectId, ref: 'users', default: null },
     DeletedAt: { type: Date },
     updatedBy: { type: String },
     updatedAt: { type: Date },

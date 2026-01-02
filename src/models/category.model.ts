@@ -10,6 +10,8 @@ export interface categoryDocument extends Document {
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
+  DeletedBy: Types.ObjectId;
+  DeletedAt: Date;
 }
 
 const categorySchema = new Schema<categoryDocument>(
@@ -24,6 +26,9 @@ const categorySchema = new Schema<categoryDocument>(
     },
     displayOrder: { type: Number, default: 0 },
     isDeleted: { type: Boolean, default: false },
+    DeletedBy: { type: Schema.Types.ObjectId, ref: 'users', default: null },
+    DeletedAt: { type: Date },
+
     status: { type: Boolean, default: true },
   },
   { timestamps: true },
@@ -36,13 +41,13 @@ categorySchema.pre('save', function (next) {
   next();
 });
 
-categorySchema.pre("findOneAndUpdate", function(next){
+categorySchema.pre('findOneAndUpdate', function (next) {
   const update: any = this.getUpdate();
-  if(update?.name){
-    update.slug =update.name.toLowerCase().replace(/\s+/g,"-")
+  if (update?.name) {
+    update.slug = update.name.toLowerCase().replace(/\s+/g, '-');
   }
   next();
-})
+});
 export const Category = model<categoryDocument>(
   'medicineCategory',
   categorySchema,

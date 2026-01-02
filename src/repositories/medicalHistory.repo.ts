@@ -70,15 +70,24 @@ export class MedicalHistoryRepo {
       },
     };
   }
-  async softDeleteData(id: string) {
+  async softDeleteData(id: string, userId: string) {
     return medicalHistory.findByIdAndUpdate(
       id,
-      { isDeleted: true },
+      {
+        isDeleted: true,
+        isActive: false,
+        DeletedBy: userId,
+        DeletedAt: new Date(),
+      },
       { new: true },
     );
   }
-  async restoreData(id: string){
-    return medicalHistory.findByIdAndUpdate(id, {isDeleted: false},{new: true})
+  async restoreData(id: string) {
+    return medicalHistory.findByIdAndUpdate(
+      id,
+      { isDeleted: false, isActive: true },
+      { new: true },
+    );
   }
   // async searchData(query: any) {
   //   const filter: any = {};

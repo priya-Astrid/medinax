@@ -15,9 +15,8 @@ export class medicineRepository {
   async getAllMedicine(query: any) {
     const { filter, options } = buildQuery(query);
     // filter.isDeleted = false;
-    const data = await medicine
-      .find(filter, null, options)
-    
+    const data = await medicine.find(filter, null, options);
+
     const total = await medicine.countDocuments(filter);
 
     return {
@@ -37,8 +36,12 @@ export class medicineRepository {
   async updateData(id: string, data: Partial<medicineDocument>) {
     return medicine.findByIdAndUpdate(id, data, { new: true });
   }
-  async softDeleteData(id: string) {
-    return medicine.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
+  async softDeleteData(id: string, userId: string) {
+    return medicine.findByIdAndUpdate(
+      id,
+      { isDeleted: true, isActive: false, DeletedBy: userId, DeletedAt: true },
+      { new: true },
+    );
   }
   async searchData(query: any) {
     const filter: any = {};
@@ -50,7 +53,7 @@ export class medicineRepository {
   async restoreData(id: string) {
     return await medicine.findByIdAndUpdate(
       id,
-      { isDeleted: false },
+      { isDeleted: false, isActive: true },
       { new: false },
     );
   }

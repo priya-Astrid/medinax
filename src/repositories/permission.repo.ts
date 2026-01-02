@@ -17,9 +17,9 @@ export class PermissionRepository {
         return await permission.findByIdAndUpdate(id, data, {new: true})
     }
     async deleteData(id:string){
-        return await permission.findByIdAndUpdate(id,{isDeleted: true} ,{new: true});
+        return await permission.findByIdAndUpdate(id,{isDeleted: true, isActive: false} ,{new: true});
     }
     async restoreData(id: string){
-        return await permission.findByIdAndUpdate(id,{isDeleted: false},{new: true});
+        return await permission.findByIdAndUpdate(id,{isDeleted: false, isActive: true},{new: true});
     }
 } 

@@ -18,8 +18,12 @@ export class LabReportRepository {
       .populate('orderId')
       .lean();
   }
-  async reUploadData(id: string, data:Partial<LabReportDocument>){
-    return LabReport.findByIdAndUpdate(id, {...data, status: 'UPLOADED'},{new : true});
+  async reUploadData(id: string, data: Partial<LabReportDocument>) {
+    return LabReport.findByIdAndUpdate(
+      id,
+      { ...data, status: 'UPLOADED' },
+      { new: true },
+    );
   }
   async getReportByPatient(patientId: string) {
     return LabReport.find({ patientId, isDeleted: false })
@@ -27,7 +31,11 @@ export class LabReportRepository {
       .sort({ uploadedAt: -1 })
       .lean();
   }
-  async softDelete(id: string) {
-    return LabReport.findByIdAndUpdate(id, { isDeleted: true }, { new: true });
+  async softDelete(id: string, userId : string) {
+    return LabReport.findByIdAndUpdate(
+      id,
+      { isDeleted: true, isActive: false, DeletedBy:userId, DeletedAt: new Date() },
+      { new: true },
+    );
   }
 }

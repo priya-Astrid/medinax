@@ -1,4 +1,4 @@
-import { Document,Types, model, Schema } from 'mongoose';
+import { Document, Types, model, Schema } from 'mongoose';
 
 export interface LabTestDocument extends Document {
   name: string;
@@ -15,13 +15,15 @@ export interface LabTestDocument extends Document {
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
+  DeletedBy: Types.ObjectId;
+  DeletedAt: Date;
 }
 
 const LabTestSchema = new Schema<LabTestDocument>(
   {
     name: { type: String, required: true },
     slug: { type: String, unique: true, index: true },
-     patientId:{type: Schema.Types.ObjectId},
+    patientId: { type: Schema.Types.ObjectId },
     category: {
       type: Schema.Types.ObjectId,
       ref: 'LabCategory',
@@ -38,6 +40,8 @@ const LabTestSchema = new Schema<LabTestDocument>(
     tags: [String],
     isDeleted: { type: Boolean, default: false },
     status: { type: String, enum: ['active', 'inactive'], default: 'active' },
+    DeletedBy: { type: Schema.Types.ObjectId, ref: 'users', default: null },
+    DeletedAt: { type: Date },
   },
 
   { timestamps: true },

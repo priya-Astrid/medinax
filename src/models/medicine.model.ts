@@ -2,7 +2,7 @@ import { Schema, Document, model, Types } from 'mongoose';
 
 export interface medicineDocument extends Document {
   medicineName: string;
-  mrp:number;
+  mrp: number;
   purchasPrice: number;
   stock: number;
   category: Types.ObjectId | string;
@@ -18,12 +18,14 @@ export interface medicineDocument extends Document {
   isDeleted: boolean;
   createdAt: Date;
   updatedAt: Date;
+  DeletedBy: Types.ObjectId;
+  DeletedAt: Date;
 }
 
 const medicineSchema = new Schema<medicineDocument>(
   {
     medicineName: { type: String, required: true },
-    mrp:{type: Number , required: true},
+    mrp: { type: Number, required: true },
     purchasPrice: { type: Number, required: true },
     stock: { type: Number, default: 0 },
     category: { type: Schema.Types.ObjectId, ref: 'medicineCategory' },
@@ -31,12 +33,14 @@ const medicineSchema = new Schema<medicineDocument>(
     brand: { type: String },
     form: { type: String },
     images: [{ type: String }],
-    tags: [{type:String}],
+    tags: [{ type: String }],
     description: { type: String },
     prescriptionRequired: { type: Boolean, default: false },
     manufacturer: { type: String, required: true },
     isDeleted: { type: Boolean, default: false },
     expiryDate: { type: Date },
+    DeletedBy: { type: Schema.Types.ObjectId, ref: 'users', default: null },
+    DeletedAt: { type: Date },
   },
   { timestamps: true },
 );

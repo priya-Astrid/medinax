@@ -23,11 +23,11 @@ export class DoctorRepository {
   async findDoctorById(id: string) {
     return await Doctor.findById(id);
   }
-   async findByUserId(userId: string) {
-      return await Doctor.findOne({ userId: userId }).populate('userId');
-    }
+  async findByUserId(userId: string) {
+    return await Doctor.findOne({ userId: userId }).populate('userId');
+  }
 
-  async findById(id: string){
+  async findById(id: string) {
     return await Doctor.findById(id).populate(
       'userId',
       'firstname lastname email',
@@ -67,6 +67,7 @@ export class DoctorRepository {
       id,
       {
         isDeleted: true,
+        isActive: false,
         DeletedAt: new Date(),
         DeletedBy: adminId,
       },
@@ -103,8 +104,11 @@ export class DoctorRepository {
   async doctorSpecialize(specialization: string) {
     return await Doctor.find({ specialization: specialization });
   }
-  async restoreData(id: string){
-    return await Doctor.findByIdAndUpdate(id, {isDeleted:false}, {new: true})
+  async restoreData(id: string) {
+    return await Doctor.findByIdAndUpdate(
+      id,
+      { isDeleted: true, isActive: false, DeletedBy: null, DeletedAt: null },
+      { new: true },
+    );
   }
 }
-

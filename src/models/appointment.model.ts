@@ -12,11 +12,13 @@ export interface AppointmentDocument extends Document {
   cancelledBy: Types.ObjectId;
   cancelDate: Date;
   createBy: Types.ObjectId;
-  previousDate : Date ;
-  previousTime : string;
+  previousDate: Date;
+  previousTime: string;
   createdAt: Date;
   updatedAt: Date;
   isReschedule: boolean;
+  DeletedBy: Schema.Types.ObjectId;
+  DeletedAt: Date;
 }
 
 const appointmentSchema = new Schema<AppointmentDocument>(
@@ -31,29 +33,33 @@ const appointmentSchema = new Schema<AppointmentDocument>(
       enum: ['BOOKED', 'CANCELLED', 'COMPLETED', 'PENDING'],
       default: 'BOOKED',
     },
-    previousDate :{type: Date},
-    previousTime: {type: String},
-    cancelReason: {type: String},
+    previousDate: { type: Date },
+    previousTime: { type: String },
+    cancelReason: { type: String },
     consultationNotes: { type: String },
-    createBy: { type: Schema.Types.ObjectId, ref: 'users'},
-    cancelledBy:{type: Schema.Types.ObjectId, ref: 'users'},
-    cancelDate:{type:Date},
-    isReschedule: {type: Boolean}
+    createBy: { type: Schema.Types.ObjectId, ref: 'users' },
+    cancelledBy: { type: Schema.Types.ObjectId, ref: 'users' },
+    cancelDate: { type: Date },
+    isReschedule: { type: Boolean },
+    DeletedBy: { type: Schema.Types.ObjectId, ref: 'users', default: null },
+    DeletedAt: { type: Date },
   },
   {
     timestamps: true,
   },
 );
-appointmentSchema.index({doctorId:1, appointmentDate: 1, timeslot:1})
-export const Appointment = model<AppointmentDocument>('Appointment', appointmentSchema);
-
+appointmentSchema.index({ doctorId: 1, appointmentDate: 1, timeslot: 1 });
+export const Appointment = model<AppointmentDocument>(
+  'Appointment',
+  appointmentSchema,
+);
 
 // appointmentType(online/ offline)
 // consultaionFess snapShot
 // duration
 // paymentstatus
 
-//  get /doctor/:id/availability?date=yyyy-mm-dd 
+//  get /doctor/:id/availability?date=yyyy-mm-dd
 // logic -doctor  working hours
 // -break time
 // already booked slot

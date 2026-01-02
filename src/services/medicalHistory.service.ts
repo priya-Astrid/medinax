@@ -75,8 +75,8 @@ export class MedicalHistoryService {
   async getSearchData(query: any) {
     return this.repo.searchData(query);
   }
-  async softDelete(id: string){
-    return this.repo.softDeleteData(id)
+  async softDelete(id: string, userId: string){
+    return this.repo.softDeleteData(id, userId)
   }
   async restoreData(id: string){
     return this.repo.restoreData(id)

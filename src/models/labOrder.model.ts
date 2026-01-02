@@ -27,6 +27,8 @@ export interface labOrderDocument extends Document {
     createdAt: Date;
     status: 'non-created' | 'created';
   };
+  DeletedBy: Types.ObjectId;
+  DeletedAt: Date;
 }
 const labOrderSchema = new Schema<labOrderDocument>(
   {
@@ -40,7 +42,7 @@ const labOrderSchema = new Schema<labOrderDocument>(
     tests: [
       {
         testId: { type: Schema.Types.ObjectId, ref: 'labtest', required: true },
-         status: {
+        status: {
           type: String,
           enum: ['pending', 'processing', 'completed'],
           default: 'pending',
@@ -54,8 +56,8 @@ const labOrderSchema = new Schema<labOrderDocument>(
       enum: ['pending', 'paid'],
       default: 'pending',
     },
-    subtotal:{type: Number, default: 0 },
-    tax:{type: Number, default: 0 },
+    subtotal: { type: Number, default: 0 },
+    tax: { type: Number, default: 0 },
     orderStatus: {
       type: String,
       enum: [
@@ -71,13 +73,15 @@ const labOrderSchema = new Schema<labOrderDocument>(
     sampleCollection: {
       collected: { type: Boolean, default: false },
       createdBy: { type: Schema.Types.ObjectId, ref: 'user' },
-      createdAt: { type: Date, default: Date.now  },
+      createdAt: { type: Date, default: Date.now },
       status: {
         type: String,
         enum: ['non-created', 'created'],
         default: 'non-created',
       },
     },
+    DeletedBy: { type: Schema.Types.ObjectId, ref: 'users', default: null },
+    DeletedAt: { type: Date },
   },
   { timestamps: true },
 );

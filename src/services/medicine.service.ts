@@ -48,8 +48,8 @@ export class MedicineService {
     }
     return this.Repository.updateData(id, data);
   }
-  async softDelete(id: string) {
-    return this.Repository.softDeleteData(id);
+  async softDelete(id: string, userId: string) {
+    return this.Repository.softDeleteData(id, userId);
   }
   async getMedicine(id: string) {
     return this.Repository.getSingleMedicine(id);

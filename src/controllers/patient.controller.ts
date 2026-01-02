@@ -100,8 +100,11 @@ export class PatientController {
     };
     res.status(200).json(response);
   });
-  softDeletePatient = asyncHandler(async (req: Request, res: Response) => {
+  softDeletePatient = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const deleteId = req.params.id;
+    if(!req.user?.id){
+      throw new AppError(400, "unauthorized access")
+    }
     const userId = req.user.id;
     const deleteData = await service.deletePatient(deleteId, userId);
     const result: APIResponse<typeof deleteData> = {

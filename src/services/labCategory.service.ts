@@ -34,7 +34,7 @@ export class LabCategoryService {
     if(!updateData) throw new AppError(404, "category not found");
     return updateData;
   }
-  async softDelete(id: string) {
-    return this.repository.SoftDeleteData(id);
+  async softDelete(id: string,userId: string) {
+    return this.repository.SoftDeleteData(id, userId);
   }
 }

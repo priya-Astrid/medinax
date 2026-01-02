@@ -38,10 +38,14 @@ export class LabCategoryRepository {
     return LabCategory.findByIdAndUpdate(id, data, { new: true });
   }
 
-  async SoftDeleteData(id: string) {
+  async SoftDeleteData(id: string, userId:string) {
     return LabCategory.findByIdAndUpdate(
       id,
-      { isDeleted: true },
+      { isDeleted: true,
+        isActive :false,
+        DeletedBy: userId,
+        DeletedAt: new Date()
+       },
       { new: true },
     );
   }

@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from 'express';
 import { LabTestService } from '../services/labTest.service';
 import { APIResponse } from '../dtos/common/response.dto';
 import { asyncHandler } from '../utils/asyncHandler';
+import { AuthenticatedRequest } from '../middleware/auth.middleware';
+import { AppError } from '../utils/AppError';
 
 const service = new LabTestService();
 export class LabTestController  {
@@ -47,14 +49,18 @@ export class LabTestController  {
         success: true,
         message: 'Data updated Successfully',
         data: updateData,
+ 
       };
       res.status(200).json(result);
     },
   );
   
   softDelete = asyncHandler(
-    async (req: Request, res: Response) => {
-      const deleteData = await service.isSoftDelete(req.params.id);
+    async (req: AuthenticatedRequest, res: Response) => {
+      if(!req.user?.id){
+        throw new AppError(401,"unauthorized access");
+      }
+      const deleteData = await service.isSoftDelete(req.params.id, req.user.id);
       const result: APIResponse<typeof deleteData> = {
         success: true,
         message: 'deleted data successfully',

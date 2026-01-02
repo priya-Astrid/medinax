@@ -16,6 +16,8 @@ export interface prescriptionDocument extends Document {
   notes: string;
   visitDate: Date;
   isDeleted: boolean;
+  DeletedBy: ObjectId;
+  DeletedAt: Date;
 }
 const prescriptionSchema = new Schema<prescriptionDocument>(
   {
@@ -43,7 +45,9 @@ const prescriptionSchema = new Schema<prescriptionDocument>(
     status: { type: String, enum: ['draft', 'finalized'], default: 'draft' },
     notes: { type: String },
     visitDate: { type: Date, default: Date.now() },
-    isDeleted: { type: Boolean, default:false },
+    isDeleted: { type: Boolean, default: false },
+    DeletedBy: { type: Schema.Types.ObjectId, ref: 'users', default: null },
+    DeletedAt: { type: Date },
   },
   { timestamps: true },
 );

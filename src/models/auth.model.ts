@@ -13,8 +13,9 @@ export interface authDocument extends Document {
   isDeleted: boolean;
   otp?: string;
   otpExpiry?: Date;
-  DeleteBy:string;
-  DeleteAt:Date;
+   DeletedBy: Schema.Types.ObjectId;
+    DeletedAt: Date;
+    
   refreshToken?: string;
 }
 
@@ -37,8 +38,9 @@ const UserSchema = new Schema<authDocument>(
     refreshToken: {
       type: String,
     },
-    DeleteBy: {type:String},
-    DeleteAt:{type:Date},
+      DeletedBy: { type: Schema.Types.ObjectId, ref: 'users' , default: null },
+    DeletedAt: { type: Date },
+    
     otp: {type:String, select:false},
     otpExpiry: {type:Date},
   },

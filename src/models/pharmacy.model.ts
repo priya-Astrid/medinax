@@ -25,6 +25,8 @@ export interface pharmacyDocument extends Document {
   };
   orderStatus: 'PENDING' | 'COMPLETED' | 'CANCELLED';
   isDelete: boolean;
+  DeletedBy: Types.ObjectId;
+  DeletedAt: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -60,6 +62,8 @@ const PharmacySchema = new Schema<pharmacyDocument>(
       default: 'PENDING',
     },
     isDelete: { type: Boolean },
+    DeletedBy: { type: Schema.Types.ObjectId, ref: 'users', default: null },
+    DeletedAt: { type: Date },
     address: {
       line1: { type: String, required: true },
       city: { type: String, required: true },

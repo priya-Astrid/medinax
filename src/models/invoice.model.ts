@@ -20,6 +20,9 @@ export interface invoiceDocument extends Document {
   status: string;
   createdBy: Types.ObjectId;
   isDeleted: boolean;
+    DeletedBy:  Schema.Types.ObjectId;
+      DeletedAt: Date;
+      
 }
 const invoiceSchema = new Schema<invoiceDocument>(
   {
@@ -61,6 +64,9 @@ const invoiceSchema = new Schema<invoiceDocument>(
       type: Boolean,
       default: false,
     },
+      DeletedBy: { type: Schema.Types.ObjectId, ref: 'users' , default: null },
+        DeletedAt: { type: Date },
+        
   },
   { timestamps: true },
 );

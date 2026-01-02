@@ -2,6 +2,8 @@ import { Response, Request } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
 import { LabCategoryService } from '../services/labCategory.service';
 import { APIResponse } from '../dtos/common/response.dto';
+import { AuthenticatedRequest } from '../middleware/auth.middleware';
+import { AppError } from '../utils/AppError';
 
 const service = new LabCategoryService();
 export class LabCategoryController {
@@ -50,8 +52,9 @@ export class LabCategoryController {
     }
     res.status(200).json(result);
   })
-  softDeleteLab = asyncHandler(async (req: Request, res: Response) => {
-    const data = await service.softDelete(req.params.id);
+  softDeleteLab = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    if(!req.user?.id) throw new AppError(401, "unauthorized access")
+    const data = await service.softDelete(req.params.id, req.user.id);
     const result: APIResponse<typeof data> = {
       success: true,
       message: 'Deleted data successfully',

@@ -101,8 +101,8 @@ export class InvoiceService {
   async updateStatus(id: string, status: 'pending' | 'paid' | 'cancelled' | 'partial') {
     return this.Repo.updateStatus(id, status);
   }
-  async isSoftDeleted(id: string) {
-    return this.Repo.isSoftDelete(id);
+  async isSoftDeleted(id: string, userId: string) {
+    return this.Repo.isSoftDelete(id, userId);
   }
   async restoreData(id: string) {
     return this.Repo.restoreInvoice(id);

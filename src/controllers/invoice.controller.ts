@@ -1,5 +1,7 @@
 import { APIResponse } from '../dtos/common/response.dto';
+import { AuthenticatedRequest } from '../middleware/auth.middleware';
 import { InvoiceService } from '../services/invoice.service';
+import { AppError } from '../utils/AppError';
 import { asyncHandler } from '../utils/asyncHandler';
 import { Request, Response } from 'express';
 const service = new InvoiceService();
@@ -40,8 +42,9 @@ export class InvoiceControler {
     }
     res.status(200).json(result);
   })
-  isSoftDeleted = asyncHandler(async(req:Request, res: Response)=>{
-    const isSoftDelete = await service.isSoftDeleted(req.params.id);
+  isSoftDeleted = asyncHandler(async(req:AuthenticatedRequest, res: Response)=>{
+    if(!req.user?.id) throw new AppError(401,"unauthorized access");
+    const isSoftDelete = await service.isSoftDeleted(req.params.id, req.user.id);
     const result: APIResponse<typeof isSoftDelete>={
         success: true,
         message: "Deleted Data successfully",

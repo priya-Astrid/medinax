@@ -3,6 +3,7 @@ import { asyncHandler } from '../utils/asyncHandler';
 import { LabReportService } from '../services/labReport.service';
 import { APIResponse } from '../dtos/common/response.dto';
 import { AppError } from '../utils/AppError';
+import { AuthenticatedRequest } from '../middleware/auth.middleware';
 
 const service = new LabReportService();
 export class LabReportController {
@@ -89,8 +90,9 @@ export class LabReportController {
     };
     res.status(200).json(result);
   });
-  softDeletedData = asyncHandler(async (req: Request, res: Response) => {
-    const deletedData = await service.SoftDeleted(req.params.id);
+  softDeletedData = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    if(!req.user?.id) throw new AppError(401, "unauthorized access")
+    const deletedData = await service.SoftDeleted(req.params.id, req.user.id);
     const result: APIResponse<typeof deletedData> = {
       success: true,
       message: 'Deleted Data succssfully',

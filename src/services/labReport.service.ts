@@ -20,7 +20,17 @@ export class LabReportService {
       verifiedAt: new Date(),
     });
   }
-  async reUploadData(
+  async reUploadData(id: string, userId: ObjectId, file: Express.Multer.File) {
+    return this.Repository.reUploadData(id, {
+      reportUrl: `/uploads/reports/${file.filename}`,
+      fileType: file.mimetype,
+      reUploadBy: userId,
+      reUploadAt: new Date(),
+      verifiedBy: undefined,
+      verifiedAt: undefined,
+    });
+  }
+  async reUploadReport(
     id: string,
     userId: ObjectId,
     file: Express.Multer.File,
@@ -33,23 +43,14 @@ export class LabReportService {
       verifiedBy: undefined,
       verifiedAt: undefined,
     });
-  }async reUploadReport(id: string, userId: ObjectId, file: Express.Multer.File) {
-  return this.Repository.reUploadData(id, {
-    reportUrl: `/uploads/reports/${file.filename}`,
-    fileType: file.mimetype,
-    reUploadBy: userId,
-    reUploadAt: new Date(),
-    verifiedBy: undefined,
-    verifiedAt: undefined,
-  });
-}
+  }
   async getReportById(id: string) {
     return this.Repository.getReportById(id);
   }
   async GetByPatient(id: string) {
     return this.Repository.getReportByPatient(id);
   }
-  async SoftDeleted(id: string) {
-    return this.Repository.softDelete(id);
+  async SoftDeleted(id: string, userId: string) {
+    return this.Repository.softDelete(id, userId);
   }
 }

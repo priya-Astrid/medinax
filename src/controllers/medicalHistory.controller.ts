@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import { MedicalHistoryService } from '../services/medicalHistory.service';
 import { APIResponse } from '../dtos/common/response.dto';
 import { asyncHandler } from '../utils/asyncHandler';
+import { AuthenticatedRequest } from '../middleware/auth.middleware';
+import { AppError } from '../utils/AppError';
 
 const service = new MedicalHistoryService();
 
@@ -59,8 +61,9 @@ export class MedicalHistoryController {
     };
     res.status(200).json(result);
   });
-  softDelete = asyncHandler(async (req: Request, res: Response) => {
-    const deleteData = await service.softDelete(req.params.id);
+  softDelete = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
+    if(!req.user?.id) throw new AppError(404, 'unauthorized access')
+    const deleteData = await service.softDelete(req.params.id, req.user.id);
     const result: APIResponse<typeof deleteData> = {
       success: true,
       message: "data deleted Successfully",

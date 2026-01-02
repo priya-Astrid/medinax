@@ -31,7 +31,7 @@ export class prescriptionRepo {
   async deleteData(id: string) {
     return prescription.findByIdAndUpdate(
       id,
-      { isDeleted: true },
+      { isDeleted: true , isActive: false},
       { new: true },
     );
   }

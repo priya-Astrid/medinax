@@ -40,7 +40,7 @@ export class LabTestService {
       throw new AppError(400, 'Invalid status');
     return this.Repository.updateData(id, data);
   }
-  async isSoftDelete(id: string) {
-    return this.Repository.softDelete(id);
+  async isSoftDelete(id: string,userId:string) {
+    return this.Repository.softDelete(id,userId);
   }
 }
