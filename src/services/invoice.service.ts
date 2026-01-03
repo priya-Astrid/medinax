@@ -7,17 +7,17 @@ import { InvoiceRepository } from '../repositories/invoice.repo';
 import { AppError } from '../utils/AppError';
 import { genetateInvoiceNo } from '../utils/generateInvoiceNo';
 export class InvoiceService {
-  private Repo = new InvoiceRepository();
+  constructor(private Repo = new InvoiceRepository()) {}
   async createInvoice(data: {
-    items:{
-      type: 'medicine'|'labtest'|'consultation';
-      refId:string;
-      quantity?:number;
+    items: {
+      type: 'medicine' | 'labtest' | 'consultation';
+      refId: string;
+      quantity?: number;
     }[];
-    discount?:number;
+    discount?: number;
   }) {
     let subTotal = 0;
-    const items:invoiceDocument['items'] = [];
+    const items: invoiceDocument['items'] = [];
 
     for (const item of data.items) {
       switch (item.type) {
@@ -98,7 +98,10 @@ export class InvoiceService {
   async singleInvoiceData(id: string) {
     return this.Repo.getSingleInvoice(id);
   }
-  async updateStatus(id: string, status: 'pending' | 'paid' | 'cancelled' | 'partial') {
+  async updateStatus(
+    id: string,
+    status: 'pending' | 'paid' | 'cancelled' | 'partial',
+  ) {
     return this.Repo.updateStatus(id, status);
   }
   async isSoftDeleted(id: string, userId: string) {

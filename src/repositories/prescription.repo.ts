@@ -28,10 +28,10 @@ export class prescriptionRepo {
   async updateData(id: string, data: Partial<prescriptionDocument>) {
     return prescription.findByIdAndUpdate(id, data, { new: true });
   }
-  async deleteData(id: string) {
+  async deleteData(id: string, userId: string) {
     return prescription.findByIdAndUpdate(
       id,
-      { isDeleted: true , isActive: false},
+      { isDeleted: true , isActive: false, DeletedBy:userId, DeletedAt: new Date()},
       { new: true },
     );
   }

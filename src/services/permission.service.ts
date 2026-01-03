@@ -1,32 +1,32 @@
 import { permission } from '../models/permissions';
-import { PermissionRepository  } from '../repositories/permission.repo';
+import { PermissionRepository } from '../repositories/permission.repo';
 import { AppError } from '../utils/AppError';
 
 export class PermissionService {
-  private repo = new PermissionRepository();
-   async permissionCreate(data: any) {
-      const exists = await permission.findOne({ permissionName: data.permissionName });
-  if (exists) throw new AppError(400, "Permission already exists");
+  constructor(private repo = new PermissionRepository()) {}
+  async permissionCreate(data: any) {
+    const exists = await permission.findOne({
+      permissionName: data.permissionName,
+    });
+    if (exists) throw new AppError(400, 'Permission already exists');
 
-      return this.repo.permissionCreate(data);
+    return this.repo.permissionCreate(data);
   }
-  
-  async getPermission(){
+
+  async getPermission() {
     return this.repo.getPermission();
-  };
-  async updataPermission(id: string, data:any){
+  }
+  async updataPermission(id: string, data: any) {
     return this.repo.updateData(id, data);
   }
-  async softDelete(id:string){
-  
+  async softDelete(id: string) {
     return this.repo.deleteData(id);
   }
 
-  async restorePermission(id: string){
+  async restorePermission(id: string) {
     return this.repo.restoreData(id);
   }
 }
-
 
 // async pharmacyData(data: Partial<pharmacyDocument>) {
 

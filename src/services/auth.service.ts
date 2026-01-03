@@ -12,7 +12,7 @@ import { Doctor } from '../models/doctor.model';
 import { Patient } from '../models/patient.model';
 import { Types } from 'joi';
 export class UserService {
-  private repo = new userRepository();
+  constructor(private repo = new userRepository()) {}
 
   async createUser(data: any) {
     const session = await mongoose.startSession();
@@ -49,7 +49,7 @@ export class UserService {
       throw error;
     }
   }
- 
+
   async loginUser(data: any) {
     const user = await this.repo.findByEmail(data.email);
     if (!user) {
@@ -73,8 +73,8 @@ export class UserService {
     const payload = {
       id: user._id,
       email: user.email,
-      role: role.map(r=>r.role),
-      permissions: [...new Set (permissions)],
+      role: role.map((r) => r.role),
+      permissions: [...new Set(permissions)],
     };
 
     const accessToken = generateAccessToken(payload);
@@ -174,7 +174,7 @@ export class UserService {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const expiry = new Date(Date.now() + 15 * 60 * 1000);
 
-    const hashedOtp= await bcrypt.hash(otp,10);
+    const hashedOtp = await bcrypt.hash(otp, 10);
     user!.otp = hashedOtp;
     user!.otpExpiry = expiry;
     await user!.save();

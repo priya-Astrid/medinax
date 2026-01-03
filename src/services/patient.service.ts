@@ -5,9 +5,10 @@ import { deleteImageFile } from '../utils/deleteImageFile';
 import path from 'path';
 
 export class PatientService {
-  private patientRepo = new PatientRepository();
-  private userRepo = new userRepository();
-
+  constructor(
+    private patientRepo = new PatientRepository(),
+    private userRepo = new userRepository(),
+  ) {}
   async getAllPatients(query: any) {
     return await this.patientRepo.findAll(query);
   }

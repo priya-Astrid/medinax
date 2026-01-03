@@ -6,7 +6,7 @@ import { Category } from '../models/category.model';
 import { Types } from 'mongoose';
 
 export class MedicineService {
-  private Repository = new medicineRepository();
+  constructor(private Repository = new medicineRepository()){};
   async createMedicine(data: Partial<medicineDocument>) {
     if (!data.medicineName || typeof data.medicineName !== 'string')
       throw new AppError(400, 'medicine name is required');

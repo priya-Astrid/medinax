@@ -9,20 +9,7 @@ import { AuthenticatedRequest } from '../middleware/auth.middleware';
 const service = new doctorService();
 
 export class DoctorController {
-  //   create doctor
-  // async createDoctor(req: Request, res: Response) {
-  //   try {
-  //     const doctor = await service.createProfile(req.body);
-  //     const response: ApIResponse<typeof doctor> = {
-  //       success: true,
-  //       message: 'DoctorProfile created successfully',
-  //       data: doctor,
-  //     };
-  //     res.status(200).json(response);
-  //   } catch (error: any) {
-  //     res.status(400).json({ success: false, message: error.message });
-  //   }
-  // }
+
   //   getAllDoctor data
   getAllDoctors = asyncHandler(async (req: Request, res: Response) => {
     const doctor = await service.getAllDoctor(req.query);

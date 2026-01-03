@@ -1,13 +1,10 @@
 import { Appointment, AppointmentDocument } from '../models/appointment.model';
-import { appointmentRepo } from '../repositories/appointment.repo';
+import { AppointmentRepo } from '../repositories/appointment.repo';
 import { AppError } from '../utils/AppError';
 
 export class AppointmentService {
-  private repo: appointmentRepo;
-  constructor() {
-    this.repo = new appointmentRepo();
-  }
-  async createAppointment(data:any) {
+  constructor(private repo = new AppointmentRepo()) {}
+  async createAppointment(data: any) {
     try {
       const doctor = await this.repo.findDoctorById(data.doctorId);
       if (!doctor) throw new AppError(404, 'doctor not found');
@@ -29,7 +26,7 @@ export class AppointmentService {
         data.timeslot,
       );
       if (conflict) throw new AppError(400, 'this time slot is already book');
-      
+
       return this.repo.createAppointment(data);
       // const appointment = await Appointment.create(data);
       // return appointment;

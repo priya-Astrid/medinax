@@ -6,8 +6,10 @@ import { AppError } from '../utils/AppError';
 import { LabCategory } from '../models/labCategory.model';
 
 export class LabTestService {
-  private categoryRepo = new LabCategoryRepository();
-  private Repository = new LabTestRepository();
+  constructor(
+    private categoryRepo = new LabCategoryRepository(),
+    private Repository = new LabTestRepository(),
+  ) {}
   async labTestCreate(data: Partial<LabTestDocument>) {
     const existing = this.Repository.findByNameCategory(
       data.name!,
@@ -40,7 +42,7 @@ export class LabTestService {
       throw new AppError(400, 'Invalid status');
     return this.Repository.updateData(id, data);
   }
-  async isSoftDelete(id: string,userId:string) {
-    return this.Repository.softDelete(id,userId);
+  async isSoftDelete(id: string, userId: string) {
+    return this.Repository.softDelete(id, userId);
   }
 }

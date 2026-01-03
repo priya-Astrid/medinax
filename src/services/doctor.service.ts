@@ -6,14 +6,11 @@ import { deleteImageFile } from '../utils/deleteImageFile';
 import { DoctorProfileResponse } from '../utils/response.utils';
 
 export class doctorService {
-  private repo: DoctorRepository;
-  private userRepo = new userRepository();
-  constructor() {
-    this.repo = new DoctorRepository();
-  }
-  // async createProfile(data: any) {
-  //   return await this.repo.create(data);
-  // }
+ 
+  constructor(
+    private repo = new DoctorRepository(),
+    private userRepo = new userRepository(),
+  ) {}
   async getAllDoctor(query: any) {
     return this.repo.find(query);
   }
@@ -22,11 +19,11 @@ export class doctorService {
     if (!doctor) throw new AppError(404, 'doctor not found');
     return doctor;
   }
-  async getDoctorProfile(doctorId:string){
+  async getDoctorProfile(doctorId: string) {
     const doctor = await this.repo.findById(doctorId);
-    if(!doctor) throw new AppError(404, 'doctor not found');
-    if(doctor.isDeleted) {
-      throw new AppError(404, "doctor profile deleted");
+    if (!doctor) throw new AppError(404, 'doctor not found');
+    if (doctor.isDeleted) {
+      throw new AppError(404, 'doctor profile deleted');
     }
     return doctor;
   }
@@ -78,25 +75,25 @@ export class doctorService {
     if (data.availableTime) DoctorUpdate.availableTime = data.availableTime;
 
     const updatedDoctor = await this.repo.upsertByUserId(userId, DoctorUpdate);
-   
+
     return DoctorProfileResponse(user, updatedDoctor);
   }
 
-  async updateDoctorProfile(userId:string, data: any){
-   const user =await this.userRepo.getByIdUser(userId);
-   if(!user) throw new AppError(404, 'user not found');
-   if(data.firstname) user.firstname = data.firstname;;
-   if(data.lastname) user.lastname = data.lastname;
-   await user.save();
+  async updateDoctorProfile(userId: string, data: any) {
+    const user = await this.userRepo.getByIdUser(userId);
+    if (!user) throw new AppError(404, 'user not found');
+    if (data.firstname) user.firstname = data.firstname;
+    if (data.lastname) user.lastname = data.lastname;
+    await user.save();
 
-   const updatedProfile : any ={};
-   if(data.availableDays) updatedProfile.availableDays =data.availableDays;
-   if(data.availableTime) updatedProfile.availableTime = data.availableTime;
-   if(data.qualifications) updatedProfile.qualifications = data.qualifications;
-   const doctor = await this.repo.upsertByUserId(userId, updatedProfile);
+    const updatedProfile: any = {};
+    if (data.availableDays) updatedProfile.availableDays = data.availableDays;
+    if (data.availableTime) updatedProfile.availableTime = data.availableTime;
+    if (data.qualifications)
+      updatedProfile.qualifications = data.qualifications;
+    const doctor = await this.repo.upsertByUserId(userId, updatedProfile);
 
-   return DoctorProfileResponse(user, doctor);
-
+    return DoctorProfileResponse(user, doctor);
   }
   // async updateById(id: string, data: any) {
   //   return this.repo.findByIdUpdate(id, data);
@@ -134,7 +131,7 @@ export class doctorService {
   async doctorSpecialize(specialization: string) {
     return this.repo.doctorSpecialize(specialization);
   }
-  async restoreData(id: string){
+  async restoreData(id: string) {
     return this.repo.restoreData(id);
   }
 }

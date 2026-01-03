@@ -5,7 +5,7 @@ import { medicineRepository } from '../repositories/medicine.repo';
 import mongoose, { Types } from 'mongoose';
 import { medicine } from '../models/medicine.model';
 export class pharmacyService {
-  private Repo = new pharmacyRepository();
+  constructor(private Repo = new pharmacyRepository()) {}
   async pharmacyData(data: Partial<pharmacyDocument>) {
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -14,7 +14,7 @@ export class pharmacyService {
       if (!data.items || data.items.length === 0)
         throw new AppError(400, 'At least one medicine required');
       let subtotal = 0;
-      const items:OrderItem[] = [];
+      const items: OrderItem[] = [];
 
       for (const item of data.items) {
         if (item.quantity <= 0) throw new AppError(400, 'invalid quantity');
@@ -91,11 +91,11 @@ export class pharmacyService {
 
     return this.Repo.updateData(id, data);
   }
-  async isDeletedData(id: string) {
+  async isDeletedData(id: string, userId: string) {
     const order = await this.Repo.findById(id);
     if (!order) throw new AppError(404, 'Order not found');
     if (order.orderStatus === 'COMPLETED')
       throw new AppError(400, 'completed order can not be deleted');
-    return this.Repo.deletedData(id);
+    return this.Repo.deletedData(id, userId);
   }
 }

@@ -3,7 +3,7 @@ import { prescriptionRepo } from '../repositories/prescription.repo';
 import { AppError } from '../utils/AppError';
 
 export class prescriptionService {
-  private Repo = new prescriptionRepo();
+  constructor(private Repo = new prescriptionRepo()) {}
 
   async pricriptionAdd(data: Partial<prescriptionDocument>) {
     if (!data.doctorId) throw new AppError(400, 'dotor is reuired');
@@ -23,11 +23,11 @@ export class prescriptionService {
 
     return this.Repo.updateData(id, data);
   }
-  async softdeleteData(id: string) {
+  async softdeleteData(id: string, userId: string) {
     const prescription = await this.Repo.findById(id);
     if (!prescription) throw new AppError(404, 'Prescription not found');
     if (prescription.status === 'finalized')
       throw new AppError(400, 'finalized prescription cannot be deleted');
-    return this.Repo.deleteData(id);
+    return this.Repo.deleteData(id, userId);
   }
 }

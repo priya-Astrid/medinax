@@ -4,14 +4,15 @@ import { AppError } from '../utils/AppError';
 import { buildQuery } from '../utils/buildQuery';
 
 export class pharmacyRepository {
-    async findById(id: string){
-        return await pharmacy.findById(id);
-    }
-  async createPharmacyData(data: Partial<pharmacyDocument>, session: mongoose.ClientSession) {
-    const result = await pharmacy.create([data],{session});
-   return result[0]
-    // return await pharmacy.create(data);
-
+  async findById(id: string) {
+    return await pharmacy.findById(id);
+  }
+  async createPharmacyData(
+    data: Partial<pharmacyDocument>,
+    session: mongoose.ClientSession,
+  ) {
+    const result = await pharmacy.create([data], { session });
+    return result[0];
   }
   async getData(query: any) {
     const { filter, options } = buildQuery(query);
@@ -24,12 +25,21 @@ export class pharmacyRepository {
       limit: options.limit,
       totalPage: Math.ceil(total / options.limit),
     };
-    // return await pharmacy.find();
   }
   async updateData(id: string, data: Partial<pharmacyDocument>) {
     return await pharmacy.findByIdAndUpdate(id, data, { new: true });
   }
-  async deletedData(id: string) {
-     return  pharmacy.findByIdAndUpdate(id,{isDelete: true, isActive: false},{ new: true });
+  async deletedData(id: string, userId: string) {
+    return pharmacy.findByIdAndUpdate(
+      id,
+      {
+        isDelete: true,
+        isActive: false,
+        DeletedBy: userId,
+        DeletedAt: new Date(),
+      },
+      { new: true },
+    );
   }
+
 }

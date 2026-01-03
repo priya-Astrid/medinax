@@ -3,7 +3,7 @@ import { LabReportDocument } from '../models/labReport.model';
 import { LabReportRepository } from '../repositories/labReport.repo';
 
 export class LabReportService {
-  private Repository = new LabReportRepository();
+  constructor(private Repository = new LabReportRepository()) {}
   async uploadReport(data: any) {
     return this.Repository.uploadReportData(data);
   }

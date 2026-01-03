@@ -3,7 +3,7 @@ import { CategoryRepository } from '../repositories/category.repo';
 import { AppError } from '../utils/AppError';
 
 export class CategoryService {
-  private repository = new CategoryRepository();
+  constructor(private repository = new CategoryRepository()) {}
   async createCategory(data: Partial<categoryDocument>) {
     if (!data.name) {
       throw new AppError(400, 'category name is required');
@@ -28,8 +28,8 @@ export class CategoryService {
     return updated;
   }
   async softDelete(id: string, userId: string) {
-    const deleted = await this.repository.isDelete(id, userId)
-   if(!deleted) throw new AppError(404, 'category not found')
+    const deleted = await this.repository.isDelete(id, userId);
+    if (!deleted) throw new AppError(404, 'category not found');
     return deleted;
   }
 }

@@ -1,14 +1,12 @@
 import { AppError } from '../utils/AppError';
 import { MedicalHistoryRepo } from '../repositories/medicalHistory.repo';
-import { appointmentRepo } from '../repositories/appointment.repo';
+import { AppointmentRepo } from '../repositories/appointment.repo';
 
 export class MedicalHistoryService {
-  private repo: MedicalHistoryRepo;
-  private appointmentRepo: appointmentRepo;
-  constructor() {
-    this.repo = new MedicalHistoryRepo();
-    this.appointmentRepo = new appointmentRepo();
-  }
+  constructor(
+    private repo = new MedicalHistoryRepo(),
+    private appointmentRepo = new AppointmentRepo(),
+  ) {}
   async createMedicalHistory(data: any) {
     const { patientId, doctorId, visitDate } = data;
 
@@ -75,10 +73,10 @@ export class MedicalHistoryService {
   async getSearchData(query: any) {
     return this.repo.searchData(query);
   }
-  async softDelete(id: string, userId: string){
-    return this.repo.softDeleteData(id, userId)
+  async softDelete(id: string, userId: string) {
+    return this.repo.softDeleteData(id, userId);
   }
-  async restoreData(id: string){
-    return this.repo.restoreData(id)
+  async restoreData(id: string) {
+    return this.repo.restoreData(id);
   }
 }

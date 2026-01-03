@@ -3,7 +3,7 @@ import { LabCategoryRepository } from '../repositories/labCategory.repo';
 import { AppError } from '../utils/AppError';
 
 export class LabCategoryService {
-  private repository = new LabCategoryRepository();
+  constructor(private repository = new LabCategoryRepository()){}
   async createData(data: Partial<labCategoryDocument>) {
     if(!data.name) throw new AppError(400, "category name is required")
     const exist = await this.repository.findByName(data.name);

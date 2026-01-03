@@ -1,7 +1,7 @@
 import { Appointment, AppointmentDocument } from '../models/appointment.model';
 import { Doctor } from '../models/doctor.model';
 import { buildQuery } from '../utils/buildQuery';
-export class appointmentRepo {
+export class AppointmentRepo {
   async findDoctorById(doctorId: any) {
     return await Doctor.findById(doctorId);
   }
