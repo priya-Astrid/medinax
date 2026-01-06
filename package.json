@@ -21,6 +21,7 @@
   "author": "Astrid Infotech",
   "license": "MIT",
   "dependencies": {
+    "amqplib": "^0.10.9",
     "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
@@ -34,12 +35,14 @@
     "mongoose": "^8.19.3",
     "morgan": "^1.10.1",
     "multer": "^2.0.2",
-    "nodemailer": "^7.0.10",
+    "nodemailer": "^7.0.12",
+    "twilio": "^5.11.1",
     "uuid": "^13.0.0",
     "winston": "^3.18.3",
     "zod": "^4.1.13"
   },
   "devDependencies": {
+    "@types/amqplib": "^0.10.8",
     "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
