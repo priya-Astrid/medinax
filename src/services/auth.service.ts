@@ -4,7 +4,7 @@ import { AppError } from '../utils/AppError';
 import jwt from 'jsonwebtoken';
 import { sanitizeUser } from '../utils/sanitizeUser';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt.utils';
-import { sendOtpEmail } from '../utils/mail.utils';
+import { sendOtpEmail } from '../helpers/otp.email';
 import { Role } from '../models/role.model';
 import mongoose from 'mongoose';
 import { User } from '../models/auth.model';

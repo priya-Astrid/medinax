@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import app from './app';
+import './listeners/appointment.listeners';
 import { connectDB } from './config/database';
 import { connectRabbitMQ } from './config/rabbitmq';
 const PORT = process.env.PORT;

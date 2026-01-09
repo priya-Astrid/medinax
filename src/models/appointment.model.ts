@@ -4,7 +4,8 @@ export interface AppointmentDocument extends Document {
   patientId: Types.ObjectId;
   doctorId: Types.ObjectId;
   appointmentDate: Date;
-  timeslot: string;
+  startTime: string;
+  endTime: string;
   reason: string;
   status: 'BOOKED' | 'CANCELLED' | 'COMPLETED' | 'PENDING';
   cancelReason?: string;
@@ -13,12 +14,13 @@ export interface AppointmentDocument extends Document {
   cancelDate: Date;
   createBy: Types.ObjectId;
   previousDate: Date;
-  previousTime: string;
+  previousStartTime: string;
+  previousEndTime: string;
   createdAt: Date;
   updatedAt: Date;
   isReschedule: boolean;
-  DeletedBy: Schema.Types.ObjectId;
-  DeletedAt: Date;
+  deletedBy: Schema.Types.ObjectId;
+  deletedAt: Date;
 }
 
 const appointmentSchema = new Schema<AppointmentDocument>(
@@ -26,7 +28,8 @@ const appointmentSchema = new Schema<AppointmentDocument>(
     patientId: { type: Schema.Types.ObjectId, ref: 'Patient', required: true },
     doctorId: { type: Schema.Types.ObjectId, ref: 'doctor', required: true },
     appointmentDate: { type: Date, required: true },
-    timeslot: { type: String, required: true },
+    startTime: { type: String, required: true },
+    endTime: { type: String, required: true },
     reason: { type: String },
     status: {
       type: String,
@@ -34,21 +37,27 @@ const appointmentSchema = new Schema<AppointmentDocument>(
       default: 'BOOKED',
     },
     previousDate: { type: Date },
-    previousTime: { type: String },
+    previousStartTime: { type: String },
+    previousEndTime: { type: String },
     cancelReason: { type: String },
     consultationNotes: { type: String },
     createBy: { type: Schema.Types.ObjectId, ref: 'users' },
     cancelledBy: { type: Schema.Types.ObjectId, ref: 'users' },
     cancelDate: { type: Date },
-    isReschedule: { type: Boolean },
-    DeletedBy: { type: Schema.Types.ObjectId, ref: 'users', default: null },
-    DeletedAt: { type: Date },
+    isReschedule: { type: Boolean, default: false },
+    deletedBy: { type: Schema.Types.ObjectId, ref: 'users', default: null },
+    deletedAt: { type: Date },
   },
   {
     timestamps: true,
   },
 );
-appointmentSchema.index({ doctorId: 1, appointmentDate: 1, timeslot: 1 });
+appointmentSchema.index({
+  doctorId: 1,
+  appointmentDate: 1,
+  startTime: 1,
+  endTime: 1,
+});
 export const Appointment = model<AppointmentDocument>(
   'Appointment',
   appointmentSchema,

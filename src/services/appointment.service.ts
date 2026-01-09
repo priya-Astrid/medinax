@@ -1,9 +1,12 @@
-import { Appointment, AppointmentDocument } from '../models/appointment.model';
+import { eventBus } from '../events/eventBus';
 import { AppointmentRepo } from '../repositories/appointment.repo';
 import { AppError } from '../utils/AppError';
+import { NotificationService } from './notification.service';
 
 export class AppointmentService {
   constructor(private repo = new AppointmentRepo()) {}
+
+  private notificationService = new NotificationService();
   async createAppointment(data: any) {
     try {
       const doctor = await this.repo.findDoctorById(data.doctorId);
@@ -23,11 +26,28 @@ export class AppointmentService {
       const conflict = await this.repo.findAppointmentConflict(
         data.doctorId,
         data.appointmentDate,
-        data.timeslot,
+        data.startTime,
+        data.endTime,
       );
       if (conflict) throw new AppError(400, 'this time slot is already book');
 
-      return this.repo.createAppointment(data);
+      const appointment = await this.repo.createAppointment(data);
+      //  const datahere = await this.notificationService.sendNotification(
+      //     {
+      // userId: data.patientId,
+      // channel: 'SMS',
+      // title:"APPOINTMENT",
+      // type:'Appointment_booked',
+      // message: `your appointment is confirmed for ${appointment.startTime} to ${appointment.endTime}`
+      //     }
+      //   )
+      //   console.log("this is repo here..",datahere);
+      eventBus.emit('APPOINTMENT_BOOKED', {
+        patientId: data.patientId,
+       startTime: appointment.startTime,
+       endTime : appointment.endTime
+      });
+      return appointment;
       // const appointment = await Appointment.create(data);
       // return appointment;
     } catch (error) {
@@ -123,18 +143,21 @@ export class AppointmentService {
     const conflict = await this.repo.findAppointmentConflict(
       appointment.doctorId,
       update.newDate,
-      update.newTime,
+      update.startTime,
+      update.endTime,
     );
     if (conflict) throw new AppError(400, 'this time slot is already book');
 
     console.log('this is config', conflict);
     // Store old date/time
     appointment.previousDate = appointment.appointmentDate;
-    appointment.previousTime = appointment.timeslot;
+    appointment.previousStartTime = appointment.startTime;
+    appointment.previousEndTime = appointment.endTime;
 
     // Update new date/time
     appointment.appointmentDate = update.newDate;
-    appointment.timeslot = update.newTime;
+    appointment.startTime = update.startTime;
+    appointment.endTime = update.endTime;
 
     // Mark rescheduled
     appointment.isReschedule = true;

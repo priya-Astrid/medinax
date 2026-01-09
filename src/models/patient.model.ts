@@ -12,6 +12,14 @@ export interface PatientDocument extends Document {
     state: string;
     pincode: string;
   };
+  schedule: [{
+    doctorId: Types.ObjectId;
+    appointmentId: Types.ObjectId;
+    Date: Date;
+    startTime: string;
+    endTime: string;
+    status:string
+  }];
   emergencyContact: {
     name?: String;
     phone?: String;
@@ -23,7 +31,7 @@ export interface PatientDocument extends Document {
   isDeleted: boolean;
   dateOfBirth: Date;
   createdAt: Date;
-  updatedBy:string;
+  updatedBy: string;
   updatedAt: Date;
 }
 
@@ -35,11 +43,16 @@ const PatientSchema = new Schema<PatientDocument>(
       unique: true,
     },
     age: { type: Number },
-    image: {type: String},
-    gender: { type: String, enum:["male", "female", "other"] },
-    medicalHistory:[ { type: String, default: [] }],
+    image: { type: String },
+    gender: { type: String, enum: ['male', 'female', 'other'] },
+    medicalHistory: [{ type: String, default: [] }],
+    schedule:[{
 
-    bloodGroup: { type: String, enum:["A+","A-","B+","B-","AB+","AB-","O+","O-"] },
+    }],
+    bloodGroup: {
+      type: String,
+      enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+    },
     address: {
       street: String,
       city: String,

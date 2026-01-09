@@ -10,7 +10,12 @@ export class AppointmentRepo {
     return await Appointment.create(data);
   }
 
-  async findAppointmentConflict(doctorId: any, date: Date, timeslot: string) {
+  async findAppointmentConflict(
+    doctorId: any,
+    date: Date,
+    startTime: string,
+    endTime: string,
+  ) {
     const start = new Date(date);
     start.setHours(0, 0, 0, 0);
     const end = new Date(date);
@@ -18,7 +23,8 @@ export class AppointmentRepo {
     return await Appointment.findOne({
       doctorId,
       appointmentDate: { $gte: start, $lte: end },
-      timeslot,
+      startTime,
+      endTime,
     });
   }
   async GetAllAppointment(query: any) {

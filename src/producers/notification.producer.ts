@@ -8,8 +8,9 @@ export const publishNotification = async (payload: any) => {
     durable: true,
   });
   const routingKey =
-    payload.channel === 'EMAIL' ? 'notificaiton.email' : 'notification.sms';
-  channel.publish(
+    payload.channel === 'EMAIL' ? 'notification.email' : 'notification.sms';
+console.log("we have ", routingKey);
+    channel.publish(
     NOTIFICATION_EXCHANGE,
     routingKey,
     Buffer.from(JSON.stringify(payload)),
