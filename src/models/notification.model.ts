@@ -9,6 +9,7 @@ export interface NotificationDocument extends Document {
   status: 'PENDING' | 'SENT' | 'FAILED';
   isRead: boolean;
   metadata: string;
+  phone:number
   createAt: Date;
 }
 const notificationSchema = new Schema<NotificationDocument>(
@@ -18,6 +19,7 @@ const notificationSchema = new Schema<NotificationDocument>(
     type: { type: String, required: true },
     message: { type: String, required: true },
     channel: { type: String, default: 'SYSTEM' },
+    phone:{type: Number},
     status: { type: String, default: 'PENDING' },
     isRead: { type: Boolean, default: false },
     metadata: { type: String },

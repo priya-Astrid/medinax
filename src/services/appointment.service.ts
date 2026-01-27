@@ -1,12 +1,9 @@
-import { eventBus } from '../events/eventBus';
+import { publishNotification } from '../producers/notification.producer';
 import { AppointmentRepo } from '../repositories/appointment.repo';
 import { AppError } from '../utils/AppError';
-import { NotificationService } from './notification.service';
 
 export class AppointmentService {
   constructor(private repo = new AppointmentRepo()) {}
-
-  private notificationService = new NotificationService();
   async createAppointment(data: any) {
     try {
       const doctor = await this.repo.findDoctorById(data.doctorId);
@@ -42,10 +39,11 @@ export class AppointmentService {
       //     }
       //   )
       //   console.log("this is repo here..",datahere);
-      eventBus.emit('APPOINTMENT_BOOKED', {
-        patientId: data.patientId,
-       startTime: appointment.startTime,
-       endTime : appointment.endTime
+      await publishNotification({
+        eventType: 'APPOINTMENT_BOOKED',
+        userId: data.patientId,
+        appointmentId:  data.appointmentId,
+        doctorId:data.doctorId
       });
       return appointment;
       // const appointment = await Appointment.create(data);

@@ -7,12 +7,14 @@ export class NotificationService {
   async sendNotification(data: Partial<NotificationDocument>) {
     const notification = await this.Repository.createNotification(data);
     console.log(notification);
+    
     // PUCH TO QUEUE
     await publishNotification({
       notificationId: notification._id,
       type: data.type,
       channel: data.channel,
       message: data.message,
+      phone:data.phone
     });
    return notification;
   }
